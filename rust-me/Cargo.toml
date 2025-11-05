@@ -1,6 +1,24 @@
 [package]
-name = "rust-me"
+name = "rust_me"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+clap = {version = "4.5.51" , features = ["derive"]}
+env_logger = "0.11.8"
+log = "0.4.28"
+memmap2 = "0.9.9"
+rand = "0.9.2"
+static_assertions = "1.1.0"
+
+[[bin]]
+name = "test-harness"
+path = "src/bin/test_harness.rs"
+
+[[bin]]
+name = "perf"
+path = "src/bin/perf.rs"
+
+[[bin]]
+name = "perf_cont"
+path = "src/bin/perf_cont.rs"

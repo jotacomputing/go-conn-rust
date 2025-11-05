@@ -10,14 +10,18 @@ import (
 )
 
 type Order struct {
+	// All uint64s first (8-byte aligned)
 	OrderID   uint64
-	ClientID  uint32
-	Symbol    [8]byte
-	Quantity  uint32
 	Price     uint64
-	Side      uint8 // 0=buy, 1=sell
 	Timestamp uint64
-	Status    uint8 // 0=pending, 1=filled, 2=rejected
+	// Then uint32s (4-byte aligned)
+	ClientID uint32
+	Quantity uint32
+	// Then uint8s (1-byte aligned)
+	Side   uint8 // 0=buy, 1=sell
+	Status uint8 // 0=pending, 1=filled, 2=rejected
+	// Array of bytes last
+	Symbol [8]byte
 }
 
 type QueueHeader struct {
