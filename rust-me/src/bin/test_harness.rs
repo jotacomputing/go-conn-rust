@@ -123,8 +123,8 @@ fn single_order() {
             println!("\n✓ Order dequeued successfully!");
             println!("  OrderID:   {}", order.order_id);
             println!("  ClientID:  {}", order.client_id);
-            println!("  Symbol:    {:?}", String::from_utf8_lossy(&order.symbol));
-            println!("  Quantity:  {}", order.quantity);
+            println!("  Symbol:    {:?}", order.symbol);
+            println!("  Quantity:  {}", order.shares_qty);
             println!("  Price:     {}", order.price);
             println!(
                 "  Side:      {}",
@@ -402,7 +402,7 @@ fn integration_test() {
                 if order.order_id == 0 {
                     stats.record_error("invalid_order_id");
                 }
-                if order.quantity == 0 {
+                if order.shares_qty == 0 {
                     stats.record_error("invalid_quantity");
                 }
 
@@ -463,12 +463,6 @@ impl TestStats {
     fn record_success(&mut self, order: &Order) {
         self.dequeued += 1;
         self.clients.insert(order.client_id);
-        let symbol = String::from_utf8_lossy(&order.symbol)
-            .trim_end_matches('\0')
-            .to_string();
-        if !symbol.is_empty() {
-            self.symbols.insert(symbol);
-        }
     }
 
     fn record_error(&mut self, _error: &str) {

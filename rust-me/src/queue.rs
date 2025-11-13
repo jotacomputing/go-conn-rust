@@ -12,12 +12,12 @@ pub struct Order {
     pub timestamp: u64,
     // Then u32s (4-byte aligned)
     pub client_id: u32,
-    pub quantity: u32,
+    pub shares_qty: u32,
     // Then u8s (1-byte aligned)
+    pub symbol: u32,
     pub side: u8,   // 0=buy, 1=sell
     pub status: u8, // 0=pending, 1=filled, 2=rejected
     // Array of bytes last
-    pub symbol: [u8; 8],
 }
 
 impl Default for Order {
@@ -25,8 +25,8 @@ impl Default for Order {
         Order {
             order_id: 0,
             client_id: 0,
-            symbol: [0; 8],
-            quantity: 0,
+            symbol: 0,
+            shares_qty: 0,
             price: 0,
             side: 0,
             timestamp: 0,
@@ -53,7 +53,7 @@ const HEADER_SIZE: usize = std::mem::size_of::<QueueHeader>();
 const TOTAL_SIZE: usize = HEADER_SIZE + (QUEUE_CAPACITY * ORDER_SIZE);
 
 // Compile-time layout assertions (fail build if wrong)
-const _: () = assert!(ORDER_SIZE == 48, "Order must be 48 bytes");
+const _: () = assert!(ORDER_SIZE == 40, "Order must be 40 bytes");
 const _: () = assert!(HEADER_SIZE == 136, "QueueHeader must be 136 bytes");
 const _: () = {
     // Verify ConsumerTail is at offset 64
@@ -298,7 +298,7 @@ mod tests {
     fn test_order_default() {
         let order = Order::default();
         assert_eq!(order.order_id, 0);
-        assert_eq!(order.quantity, 0);
+        assert_eq!(order.shares_qty, 0);
         assert_eq!(order.price, 0);
     }
 

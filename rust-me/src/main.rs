@@ -62,7 +62,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// Simulate order execution (matching engine logic goes here)
 fn execute_order(order: &Order) -> bool {
     // Validate order
-    if order.quantity == 0 || order.price == 0 {
+    if order.shares_qty == 0 || order.price == 0 {
         return false; // Reject invalid
     }
 

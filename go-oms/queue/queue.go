@@ -5,7 +5,6 @@ import (
 	"os"
 	"sync/atomic"
 	"unsafe"
-
 	"github.com/edsrzf/mmap-go"
 )
 
@@ -17,15 +16,16 @@ type Order struct {
 	// Then uint32s (4-byte aligned)
 	ClientID uint32
 	Quantity uint32
+	Symbol uint32
 	// Then uint8s (1-byte aligned)
 	Side   uint8 // 0=buy, 1=sell
 	Status uint8 // 0=pending, 1=filled, 2=rejected
 	// Array of bytes last
-	Symbol [8]byte
+	
 }
 
 type QueueHeader struct {
-	ProducerHead uint64   // Offset 0
+	ProducerHead uint64   // Offset 0 4 byte interger 
 	_pad1        [56]byte // Padding to cache line
 	ConsumerTail uint64   // Offset 64
 	_pad2        [56]byte // Padding
@@ -43,7 +43,7 @@ const (
 
 type Queue struct {
 	file   *os.File
-	mmap   mmap.MMap
+	mmap   mmap.MMap   // this is the array of bytes wich we will use to read and write 
 	header *QueueHeader
 	orders []Order
 }
@@ -56,6 +56,7 @@ func CreateQueue(filePath string) (*Queue, error) {
 		return nil, fmt.Errorf("failed to create file: %w", err)
 	}
 
+	// set the size of the file
 	if err := file.Truncate(int64(TotalSize)); err != nil {
 		file.Close()
 		return nil, fmt.Errorf("failed to truncate file: %w", err)
@@ -66,7 +67,7 @@ func CreateQueue(filePath string) (*Queue, error) {
 		file.Close()
 		return nil, fmt.Errorf("failed to sync file: %w", err)
 	}
-
+	// m is just a byte array that is mapped to the real file on the Ram 
 	m, err := mmap.Map(file, mmap.RDWR, 0)
 	if err != nil {
 		file.Close()

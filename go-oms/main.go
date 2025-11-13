@@ -82,12 +82,12 @@ func testSingleOrder() {
 	defer q.Close()
 
 	order := queue.Order{
-		OrderID:   1,
+		OrderID:   3,
 		ClientID:  1001,
-		Symbol:    [8]byte{'K', 'O', 'H', 'L', 'I', 0, 0, 0},
-		Quantity:  100,
-		Price:     50000,
-		Side:      0, // buy
+		Symbol:    0,
+		Quantity:  16,
+		Price:     12000,
+		Side:      0, // 1 ask(sell) 0 buy(bid)
 		Timestamp: uint64(time.Now().UnixNano()),
 		Status:    0, // pending
 	}
@@ -98,7 +98,7 @@ func testSingleOrder() {
 
 	fmt.Printf("[TEST] Single order sent successfully\n")
 	fmt.Printf("       OrderID: %d\n", order.OrderID)
-	fmt.Printf("       Symbol: %s\n", string(order.Symbol[:]))
+	fmt.Printf("       Symbol: %s\n", string(order.Symbol))
 	fmt.Printf("       Qty: %d @ %d\n", order.Quantity, order.Price)
 	fmt.Printf("       Queue depth: %d\n", q.Depth())
 }
@@ -113,7 +113,7 @@ func testBatch() {
 	}
 	defer q.Close()
 
-	symbols := []string{"KOHLI", "ROHIT", "DHONI"}
+	//symbols := []string{"KOHLI", "ROHIT", "DHONI"}
 	sides := []uint8{0, 1} // buy, sell
 	clients := []uint32{1001, 1002, 1003}
 
@@ -133,10 +133,10 @@ func testBatch() {
 		}
 
 		// Copy symbol
-		symbol := symbols[i%len(symbols)]
-		for j := 0; j < len(symbol) && j < 8; j++ {
-			order.Symbol[j] = symbol[j]
-		}
+		//symbol := symbols[i%len(symbols)]
+		//zfor j := 0; j < len(symbol) && j < 8; j++ {
+		//z	order.Symbol[j] = symbol[j]
+		//z}
 
 		// Try enqueue with retries on backpressure
 		retries := 0
@@ -185,7 +185,7 @@ func testContinuousStream() {
 	}
 	defer q.Close()
 
-	symbols := []string{"KOHLI", "ROHIT", "DHONI", "SMITH", "WARNER"}
+	//symbols := []string{"KOHLI", "ROHIT", "DHONI", "SMITH", "WARNER"}
 	sides := []uint8{0, 1}
 	clients := []uint32{1001, 1002, 1003, 1004, 1005}
 
@@ -212,10 +212,10 @@ func testContinuousStream() {
 				Status:    0,
 			}
 
-			symbol := symbols[rand.Intn(len(symbols))]
-			for j := 0; j < len(symbol) && j < 8; j++ {
-				order.Symbol[j] = symbol[j]
-			}
+			//symbol := symbols[rand.Intn(len(symbols))]
+			////for j := 0; j < len(symbol) && j < 8; j++ {
+			////	order.Symbol[j] = symbol[j]
+			//}
 
 			if err := q.Enqueue(order); err != nil {
 				fmt.Printf("[TEST] Backpressure: %v (queue depth: %d)\n", err, q.Depth())

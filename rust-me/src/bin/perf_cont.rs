@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let atomic_count = Arc::new(AtomicU64::new(0));
     let count_clone = atomic_count.clone();
 
-    // Stats goroutine
+    // Stats thread 
     thread::spawn(move || {
         let mut last_count = 0u64;
         let mut last_time = std::time::Instant::now();

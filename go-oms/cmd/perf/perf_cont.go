@@ -30,7 +30,7 @@ func main() {
 		Price:    50000,
 		Side:     0,
 		Status:   0,
-		Symbol:   [8]byte{'K', 'O', 'H', 'L', 'I', 0, 0, 0},
+		Symbol:   0,
 	}
 
 	// Stats goroutine
